@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>注文完了</title>
+    <!-- 表示サイズを設定するCSS -->
+    <style>
+        body {
+            font-size: 40px; /* ベースフォントサイズを変更 */
+        }
+        h1 {
+            font-size: 72px; /* タイトルのフォントサイズを変更 */
+        }
+        a {
+            font-size: 40px; /* リンクのフォントサイズを変更 */
+            text-decoration: none; /* リンクの下線を削除 */
+            color: #0066cc; /* リンクの色を変更 */
+        }
+        a:hover {
+            color: #ff3366; /* リンクをマウスオーバーした際の色を変更 */
+        }
+    </style>
+</head>
+<body>
+    <h1>注文を受け付けました</h1>
+    <a href="{{ url_for('index') }}">トップページに戻る</a>
+</body>
+</html>

@@ -1,0 +1,101 @@
+from flask import Flask, render_template, request, redirect, url_for
+import sqlite3
+import pandas as pd
+from collections import defaultdict
+
+
+app = Flask(__name__)
+
+
+class Client:
+    def __init__(self, id, name, course, items):
+        self.id = id
+        self.name = name
+        self.course = course
+        self.items = items  # ここを修正
+
+
+def load_clients_from_file(file_path, file_type="csv"):
+    if file_type == "csv":
+        df = pd.read_csv(file_path)
+    elif file_type == "excel":
+        df = pd.read_excel(file_path)
+    else:
+        raise ValueError("Invalid file type. Use 'csv' or 'excel'.")
+
+    clients = []
+    for index, row in df.iterrows():
+        items = [
+            {"name": row[f"item{i}"]}
+            for i in range(1, 7)
+            if not pd.isnull(row[f"item{i}"])
+        ]
+        clients.append(Client(row["id"], row["name"], row["course"], items))
+
+    return clients
+
+
+clients = load_clients_from_file(
+    "clients.xlsx", file_type="excel"
+)  # Use "clients.xlsx" and file_type="excel" for Excel file
+
+
+def get_client(id):
+    for client in clients:
+        if client.id == id:
+            return client
+    return None
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/id_submit", methods=["POST"])
+def id_submit():
+    client_id = request.form.get("client_id")
+    if client_id and get_client(int(client_id)):
+        return redirect(url_for("client_page", id=client_id))
+    else:
+        return "Client not found", 404
+
+
+@app.route("/client/<int:id>", methods=["GET"])
+def client_page(id):
+    client = get_client(id)
+    if client:
+        return render_template("client.html", client=client)
+    else:
+        return "Client not found", 404
+
+
+@app.route("/submit", methods=["POST"])
+def submit_order():
+    order_data = []
+    for key, value in request.form.items():
+        if value:
+            course, item = key.split("_")
+            order_data.append([int(course), item, int(value)])
+
+    if order_data:
+        # Load existing Excel file or create a new one
+        try:
+            df = pd.read_excel("orders.xlsx")
+        except FileNotFoundError:
+            columns = ["コース№", "項目", "個数"]
+            df = pd.DataFrame(columns=columns)
+
+        # Append new order data to the DataFrame
+        new_df = pd.DataFrame(order_data, columns=["コース№", "項目", "個数"])
+        df = df.append(new_df, ignore_index=True)
+
+        # Save the DataFrame to the Excel file
+        df.to_excel("orders.xlsx", index=False)
+
+    # return redirect(url_for("index"))
+    return render_template("order_received.html")  # テンプレートを変更
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

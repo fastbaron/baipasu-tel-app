@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>宅配弁当受注アプリ - {{ client.name }}</title>
+    <!-- 表示サイズを設定するCSS -->
+    <style>
+        body {
+            font-size: 40px; /* ベースフォントサイズを変更 */
+        }
+        h1 {
+            font-size: 72px; /* タイトルのフォントサイズを変更 */
+        }
+        table {
+            font-size: 40px; /* テーブルのフォントサイズを変更 */
+            border-collapse: collapse; /* セルのボーダーを繋げる */
+        }
+        th, td {
+            padding: 20px; /* セルの内側の余白を設定 */
+        }
+        input[type="number"], button {
+            font-size: 40px; /* 入力ボックスとボタンのフォントサイズを変更 */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>{{ client.name }} 様</h1>
+    <form action="/submit" method="post">
+        <input type="hidden" name="client_id" value="{{ client.id }}">
+        <input type="hidden" name="client_name" value="{{ client.name }}">
+        <input type="hidden" name="course" value="{{ client.course }}">
+
+        <table border="1">
+            <tr>
+                <!-- <th>コース№</th> -->
+                <!-- <th>相手先</th> -->
+                <th>項目</th>
+                <th>個数</th>
+            </tr>
+            {% for item in client.items %}  <!-- ここを修正 -->
+                <tr>
+                    <!-- <td>{{ client.course }}</td> -->
+                    <!-- <td>{{ client.name }}</td> -->
+                    <td>{{ item.name }}</td>
+                    <td>
+                        <!-- <input type="number" name="{{ client.course }}_{{ item.name }}" min="0" value="0"> -->
+                        <input type="number" name="{{ client.course }}_{{ item.name }}" min="0" max="200" step="1" value="0">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button type="submit">注文を送信</button>
+    </form>
+</body>
+</html>

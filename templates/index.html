@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>宅配弁当受注アプリ</title>
+    <!-- 表示サイズを設定するCSS -->
+    <style>
+        body {
+            font-size: 40px; /* ベースフォントサイズを変更 */
+        }
+        h1 {
+            font-size: 72px; /* タイトルのフォントサイズを変更 */
+        }
+        label, input[type="number"], button {
+            font-size: 40px; /* ラベル、入力ボックス、ボタンのフォントサイズを変更 */
+        }
+    </style>
+</head>
+<body>
+    <h1>宅配弁当受注アプリ</h1>
+    <form action="/id_submit" method="post">
+        <label for="client_id">IDを入力してください:</label>
+        <input type="number" name="client_id" id="client_id" min="1">
+        <button type="submit">送信</button>
+    </form>
+</body>
+</html>
